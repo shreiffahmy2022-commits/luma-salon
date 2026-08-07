@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luma Beauty Lounge — Book Online</title>
+<style>
+:root{
+  --bg:#faf7f2; --ink:#241d2e; --muted:#8a8296; --line:#eae4da; --card:#ffffff;
+  --plum:#5b3b6e; --plum-soft:#f2ecf6; --bronze:#b9895a; --bronze-soft:#f7efe6;
+  --green:#2f9e63; --green-soft:#e6f6ed; --red:#c94f4f;
+  --shadow:0 2px 6px rgba(36,29,46,.05),0 14px 34px -16px rgba(36,29,46,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:15px/1.55 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",serif;font-weight:600;letter-spacing:.2px}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font:inherit;width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff;outline:none;color:var(--ink)}
+input:focus,textarea:focus{border-color:var(--plum);box-shadow:0 0 0 3px rgba(91,59,110,.12)}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin:12px 0 5px}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+
+/* Hero */
+.hero{background:linear-gradient(160deg,#2c2138,#4b3560 60%,#5b3b6e);color:#fff;padding:52px 0 88px;text-align:center;position:relative}
+.hero .badge{display:inline-block;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:5px 14px;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;color:#e8ddf1}
+.hero h1{font-size:40px;line-height:1.15;margin-bottom:10px}
+.hero p{color:#cfc3dc;max-width:460px;margin:0 auto}
+.hero .meta{display:flex;gap:22px;justify-content:center;margin-top:18px;font-size:13px;color:#d9cfe6;flex-wrap:wrap}
+.hero .meta b{color:#fff}
+.cta{display:inline-block;margin-top:26px;background:var(--bronze);color:#fff;padding:14px 34px;border-radius:99px;font-weight:700;font-size:15.5px;box-shadow:0 12px 28px -10px rgba(185,137,90,.7);transition:transform .12s}
+.cta:hover{transform:translateY(-2px)}
+
+/* Menu */
+.menu{margin-top:-52px;padding-bottom:60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.menu .card{padding:8px 24px 18px}
+.cat{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bronze);margin:22px 0 4px}
+.svc{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px dashed var(--line)}
+.svc:last-child{border-bottom:none}
+.svc .nm{flex:1}
+.svc .nm b{font-size:15px}
+.svc .nm .mini{color:var(--muted);font-size:12.5px}
+.svc .pr{font-weight:700;white-space:nowrap}
+.svc .bk{background:var(--plum-soft);color:var(--plum);font-weight:700;padding:8px 16px;border-radius:99px;font-size:13px;transition:filter .12s}
+.svc .bk:hover{filter:brightness(.94)}
+.foot{text-align:center;color:var(--muted);font-size:12.5px;padding:26px 0 40px}
+
+/* Wizard overlay */
+#wiz{position:fixed;inset:0;background:rgba(30,23,40,.55);display:none;z-index:50;overflow:auto;padding:26px 14px}
+#wiz.open{display:block}
+.panel{max-width:560px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:up .18s ease}
+@keyframes up{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.p-head{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.p-head h3{font-size:19px;flex:1}
+.p-head .x{color:var(--muted);font-size:20px;padding:4px}
+.steps{display:flex;gap:6px;padding:14px 22px 0}
+.step-dot{flex:1;height:4px;border-radius:99px;background:var(--line)}
+.step-dot.on{background:var(--plum)}
+.p-body{padding:16px 22px 22px;min-height:300px}
+.p-foot{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--line);align-items:center}
+.btn{padding:12px 22px;border-radius:99px;font-weight:700;font-size:14.5px}
+.btn-main{background:var(--plum);color:#fff;box-shadow:0 10px 22px -10px rgba(91,59,110,.7)}
+.btn-main:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn-lite{background:#f3eee7;color:var(--ink)}
+.opt{display:flex;align-items:center;gap:13px;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:border .12s,background .12s}
+.opt:hover{border-color:#cbb8d8}
+.opt.sel{border-color:var(--plum);background:var(--plum-soft)}
+.opt .nm{flex:1}
+.opt .nm b{font-size:14.5px;display:block}
+.opt .nm small{color:var(--muted)}
+.opt .pr{font-weight:700}
+.avatar{width:40px;height:40px;border-radius:99px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.datestrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.d-item{flex:none;width:64px;text-align:center;border:1.5px solid var(--line);border-radius:13px;padding:9px 4px;cursor:pointer}
+.d-item.sel{border-color:var(--plum);background:var(--plum-soft)}
+.d-item .dw{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.d-item .dn{font-size:18px;font-weight:700;font-family:Georgia,serif}
+.d-item.off{opacity:.35;cursor:default}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;margin-top:10px}
+.slot{border:1.5px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center;font-weight:600;font-size:13px;cursor:pointer}
+.slot:hover{border-color:#cbb8d8}
+.slot.sel{border-color:var(--plum);background:var(--plum);color:#fff}
+.note{background:var(--bronze-soft);border-radius:12px;padding:11px 14px;font-size:13px;margin-top:12px;color:#7c5a37}
+.sumline{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;border-bottom:1px dashed var(--line)}
+.sumline b.big{font-size:17px}
+.empty{color:var(--muted);text-align:center;padding:26px 10px;font-size:14px}
+.success{text-align:center;padding:26px 8px 10px}
+.success .tick{width:70px;height:70px;border-radius:99px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:32px;margin:0 auto 16px}
+.success h3{font-size:24px;margin-bottom:6px}
+.success .ref{display:inline-block;background:#f3eee7;border-radius:99px;padding:6px 16px;font-weight:700;letter-spacing:1px;margin:10px 0 18px}
+.err{color:var(--red);font-size:12.5px;margin-top:6px;display:none}
+@media(max-width:520px){.hero h1{font-size:30px}.p-body{min-height:240px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="badge">Beauty · Hair · Spa</div>
+    <h1 id="salon-name">Luma Beauty Lounge</h1>
+    <p>Where you come first. Book your next appointment online in under a minute — no calls, no waiting.</p>
+    <div class="meta"><span>★ <b>4.9</b> (128 reviews)</span><span>Jumeirah St., Dubai</span><span>Open daily <b>10:00–21:00</b></span></div>
+    <br><button class="cta" onclick="startWiz()">Book an appointment</button>
+  </div>
+</div>
+
+<div class="menu wrap">
+  <div class="card" id="menu-card"></div>
+  <div class="foot">Powered by <b>Luma</b> · Free cancellation up to 2 hours before your visit</div>
+</div>
+
+<div id="wiz"><div class="panel">
+  <div class="p-head"><h3 id="w-title">Choose a service</h3><button class="x" onclick="closeWiz()">✕</button></div>
+  <div class="steps" id="w-steps"></div>
+  <div class="p-body" id="w-body"></div>
+  <div class="p-foot" id="w-foot"></div>
+</div></div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayISO=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const minToStr=m=>{let h=Math.floor(m/60),mm=m%60,ap=h>=12?"PM":"AM";return (h%12||12)+":"+pad(mm)+" "+ap};
+const dateLong=s=>new Date(s+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+const uid=()=>"id"+Math.random().toString(36).slice(2,9);
+const money=v=>CUR+" "+Number(v).toLocaleString();
+
+/* ---------- catalog (fallback seed, matches admin app) ---------- */
+const FALLBACK={
+ staff:[
+  {id:"st1",name:"Sara Haddad",role:"Senior Hair Stylist",color:"#6d4aff"},
+  {id:"st2",name:"Layla Mansour",role:"Nail Technician",color:"#0fb5a6"},
+  {id:"st3",name:"Omar Khalil",role:"Barber",color:"#f59e0b"},
+  {id:"st4",name:"Nour El Sayed",role:"Esthetician",color:"#e5484d"},
+  {id:"st5",name:"Huda Aziz",role:"Massage Therapist",color:"#2f80ed"}],
+ services:[
+  {id:"sv1",cat:"Hair",name:"Haircut & Blowdry",dur:60,price:180},
+  {id:"sv2",cat:"Hair",name:"Full Color",dur:120,price:420},
+  {id:"sv3",cat:"Hair",name:"Highlights / Balayage",dur:150,price:600},
+  {id:"sv4",cat:"Hair",name:"Keratin Treatment",dur:120,price:750},
+  {id:"sv5",cat:"Nails",name:"Classic Manicure",dur:45,price:90},
+  {id:"sv6",cat:"Nails",name:"Gel Pedicure",dur:60,price:150},
+  {id:"sv7",cat:"Nails",name:"Nail Extensions",dur:90,price:280},
+  {id:"sv8",cat:"Barber",name:"Gents Cut & Beard",dur:45,price:120},
+  {id:"sv9",cat:"Barber",name:"Hot Towel Shave",dur:30,price:80},
+  {id:"sv10",cat:"Skin",name:"Deep Cleansing Facial",dur:60,price:320},
+  {id:"sv11",cat:"Skin",name:"Hydrafacial",dur:75,price:480},
+  {id:"sv12",cat:"Massage",name:"Relaxing Massage 60m",dur:60,price:300},
+  {id:"sv13",cat:"Massage",name:"Deep Tissue 90m",dur:90,price:430},
+  {id:"sv14",cat:"Skin",name:"Brow Shaping & Tint",dur:30,price:110}]
+};
+/* Shared store: if the admin app (salon-mvp.html) has data in this browser, use it live. */
+let ADMIN=null,CUR="AED";
+try{const raw=localStorage.getItem("lumaMVP");if(raw){const p=JSON.parse(raw);if(p&&p.data&&p.data.staff&&p.data.staff.length){ADMIN=p;CUR=(p.settings&&p.settings.currency)||"AED";}}}catch(e){}
+const STAFF=ADMIN?ADMIN.data.staff:FALLBACK.staff;
+const SERVICES=ADMIN?ADMIN.data.services:FALLBACK.services;
+const APPTS=()=>ADMIN?ADMIN.data.appointments:(window._localAppts=window._localAppts||[]);
+if(ADMIN&&ADMIN.settings&&ADMIN.settings.name)$("#salon-name").textContent=ADMIN.settings.name;
+const getSvc=id=>SERVICES.find(s=>s.id===id);
+const getStaff=id=>STAFF.find(s=>s.id===id);
+
+/* ---------- service menu ---------- */
+(function renderMenu(){
+  const cats=[...new Set(SERVICES.map(s=>s.cat))];
+  $("#menu-card").innerHTML=cats.map(cat=>`
+    <div class="cat">${esc(cat)}</div>
+    ${SERVICES.filter(s=>s.cat===cat).map(s=>`
+      <div class="svc">
+        <div class="nm"><b>${esc(s.name)}</b><div class="mini">${s.dur} min</div></div>
+        <div class="pr">${money(s.price)}</div>
+        <button class="bk" onclick="startWiz('${s.id}')">Book</button>
+      </div>`).join("")}`).join("");
+})();
+
+/* ---------- availability ---------- */
+const OPEN=600,CLOSE=1260,STEP=30;
+function busy(staffId,date){return APPTS().filter(a=>a.staffId===staffId&&a.date===date&&a.status!=="cancelled"&&a.status!=="noshow")}
+function staffFree(staffId,date,start,dur){
+  return !busy(staffId,date).some(a=>{const d=(getSvc(a.serviceId)||{dur:30}).dur;return start<a.start+d&&a.start<start+dur});
+}
+function slotsFor(date,dur,staffId){
+  const out=[];
+  const now=new Date();const isToday=date===todayISO();
+  const minStart=isToday?now.getHours()*60+now.getMinutes()+30:0;
+  for(let m=OPEN;m+dur<=CLOSE;m+=STEP){
+    if(m<minStart)continue;
+    if(staffId){if(staffFree(staffId,date,m,dur))out.push({m,staffId})}
+    else{const f=STAFF.find(s=>staffFree(s.id,date,m,dur));if(f)out.push({m,staffId:f.id})}
+  }
+  return out;
+}
+
+/* ---------- wizard ---------- */
+let W=null;
+function startWiz(serviceId){
+  W={step:1,serviceId:serviceId||null,staffId:null,anyStaff:!serviceId?false:false,date:todayISO(),slot:null,name:"",phone:"",email:"",notes:""};
+  if(serviceId)W.step=2;
+  $("#wiz").classList.add("open");document.body.style.overflow="hidden";
+  paint();
+}
+function closeWiz(){$("#wiz").classList.remove("open");document.body.style.overflow="";W=null}
+function paint(){
+  const titles={1:"Choose a service",2:"Choose your professional",3:"Pick a date & time",4:"Your details",5:"Booking confirmed"};
+  $("#w-title").textContent=titles[W.step];
+  $("#w-steps").innerHTML=[1,2,3,4].map(i=>`<div class="step-dot ${W.step>=i?"on":""}"></div>`).join("");
+  $("#w-steps").style.display=W.step===5?"none":"flex";
+  const B=$("#w-body"),F=$("#w-foot");
+  if(W.step===1){
+    B.innerHTML=SERVICES.map(s=>`<div class="opt ${W.serviceId===s.id?"sel":""}" onclick="W.serviceId='${s.id}';paint()">
+      <div class="nm"><b>${esc(s.name)}</b><small>${esc(s.cat)} · ${s.dur} min</small></div><div class="pr">${money(s.price)}</div></div>`).join("");
+    F.innerHTML=footer(!W.serviceId);
+  }
+  if(W.step===2){
+    const sv=getSvc(W.serviceId);
+    B.innerHTML=`
+      <div class="opt ${W.staffId===null&&W.anyStaff?"sel":""}" onclick="W.staffId=null;W.anyStaff=true;paint()">
+        <div class="avatar" style="background:linear-gradient(135deg,#5b3b6e,#b9895a)">✦</div>
+        <div class="nm"><b>Any professional</b><small>First available — maximum choice of times</small></div></div>
+      ${STAFF.map(s=>`<div class="opt ${W.staffId===s.id?"sel":""}" onclick="W.staffId='${s.id}';W.anyStaff=false;paint()">
+        <div class="avatar" style="background:${s.color||"#5b3b6e"}">${esc(s.name.split(" ").map(x=>x[0]).slice(0,2).join(""))}</div>
+        <div class="nm"><b>${esc(s.name)}</b><small>${esc(s.role||"")}</small></div></div>`).join("")}
+      <div class="note">Booking: <b>${esc(sv.name)}</b> · ${sv.dur} min · ${money(sv.price)}</div>`;
+    F.innerHTML=footer(!(W.anyStaff||W.staffId));
+  }
+  if(W.step===3){
+    const sv=getSvc(W.serviceId);
+    const days=[];for(let i=0;i<14;i++)days.push(addDays(todayISO(),i));
+    const slots=slotsFor(W.date,sv.dur,W.staffId);
+    B.innerHTML=`
+      <div class="datestrip">${days.map(d=>{const dt=new Date(d+"T12:00:00");
+        return `<div class="d-item ${W.date===d?"sel":""}" onclick="W.date='${d}';W.slot=null;paint()">
+        <div class="dw">${dt.toLocaleDateString("en",{weekday:"short"})}</div><div class="dn">${dt.getDate()}</div>
+        <div class="dw" style="text-transform:none">${dt.toLocaleDateString("en",{month:"short"})}</div></div>`}).join("")}</div>
+      <b class="serif" style="font-size:16px">${dateLong(W.date)}</b>
+      ${slots.length?`<div class="slots">${slots.map(s=>`<div class="slot ${W.slot&&W.slot.m===s.m?"sel":""}" onclick='W.slot=${JSON.stringify(s)};paint()'>${minToStr(s.m)}</div>`).join("")}</div>`
+        :`<div class="empty">No availability this day${W.staffId?" with "+esc(getStaff(W.staffId).name.split(" ")[0])+" — try “Any professional”":""}. Try another date.</div>`}
+      ${W.slot?`<div class="note">✓ ${minToStr(W.slot.m)} with <b>${esc(getStaff(W.slot.staffId).name)}</b></div>`:""}`;
+    F.innerHTML=footer(!W.slot);
+  }
+  if(W.step===4){
+    const sv=getSvc(W.serviceId),st=getStaff(W.slot.staffId);
+    B.innerHTML=`
+      <div class="sumline"><span>${esc(sv.name)} · ${sv.dur} min</span><b>${money(sv.price)}</b></div>
+      <div class="sumline"><span>${dateLong(W.date)} · ${minToStr(W.slot.m)}</span><span>with ${esc(st.name)}</span></div>
+      <label>Full name *</label><input id="f-name" value="${esc(W.name)}" placeholder="Your name">
+      <label>Phone (WhatsApp) *</label><input id="f-phone" value="${esc(W.phone)}" placeholder="+971 5x xxx xxxx">
+      <label>Email</label><input id="f-email" value="${esc(W.email)}" placeholder="Optional">
+      <label>Notes</label><textarea id="f-notes" rows="2" placeholder="Anything we should know? (optional)">${esc(W.notes)}</textarea>
+      <div class="err" id="f-err">Please enter your name and phone number.</div>`;
+    F.innerHTML=footer(false,"Confirm booking");
+  }
+  if(W.step===5){
+    const sv=getSvc(W.serviceId),st=getStaff(W.slot.staffId);
+    B.innerHTML=`<div class="success">
+      <div class="tick">✓</div>
+      <h3>See you soon, ${esc(W.name.split(" ")[0])}!</h3>
+      <div style="color:var(--muted)">Your appointment is booked.</div>
+      <div class="ref">REF · ${W.ref}</div>
+      <div class="sumline"><span>${esc(sv.name)}</span><b>${money(sv.price)}</b></div>
+      <div class="sumline"><span>${dateLong(W.date)} · ${minToStr(W.slot.m)}</span><span>${esc(st.name)}</span></div>
+      <div class="note" style="text-align:left">📱 A confirmation will be sent to <b>${esc(W.phone)}</b>. Free cancellation up to 2 hours before.</div>
+    </div>`;
+    F.innerHTML=`<span style="flex:1"></span><button class="btn btn-lite" onclick="closeWiz()">Done</button><button class="btn btn-main" onclick="startWiz()">Book another</button>`;
+  }
+}
+function footer(nextDisabled,nextLabel){
+  return `${W.step>1?`<button class="btn btn-lite" onclick="back()">← Back</button>`:""}
+    <span style="flex:1"></span>
+    <button class="btn btn-main" id="w-next" ${nextDisabled?"disabled":""} onclick="next()">${nextLabel||"Continue"}</button>`;
+}
+function back(){W.step--;paint()}
+function next(){
+  if(W.step===4){
+    W.name=$("#f-name").value.trim();W.phone=$("#f-phone").value.trim();W.email=$("#f-email").value.trim();W.notes=$("#f-notes").value.trim();
+    if(!W.name||!W.phone){$("#f-err").style.display="block";return}
+    confirmBooking();return;
+  }
+  W.step++;paint();
+}
+function confirmBooking(){
+  const appt={id:uid(),date:W.date,start:W.slot.m,staffId:W.slot.staffId,serviceId:W.serviceId,status:"booked",notes:(W.notes?W.notes+" ":"")+"(online booking)",customerId:null};
+  W.ref=appt.id.slice(-6).toUpperCase();
+  try{
+    if(ADMIN){
+      // attach / create customer in the shared admin store
+      let c=ADMIN.data.customers.find(x=>x.phone.replace(/\s/g,"")===W.phone.replace(/\s/g,"")||x.name.toLowerCase()===W.name.toLowerCase());
+      if(!c){c={id:"c"+uid(),name:W.name,phone:W.phone,email:W.email,tag:"new",notes:""};ADMIN.data.customers.push(c);}
+      appt.customerId=c.id;
+      ADMIN.data.appointments.push(appt);
+      localStorage.setItem("lumaMVP",JSON.stringify(ADMIN));
+    }else{
+      // queue for the admin app to import on next load
+      APPTS().push(appt);
+      const q=JSON.parse(localStorage.getItem("lumaBookings")||"[]");
+      q.push({...appt,clientName:W.name,clientPhone:W.phone,clientEmail:W.email});
+      localStorage.setItem("lumaBookings",JSON.stringify(q));
+    }
+  }catch(e){/* storage unavailable — booking still confirmed for the demo session */ APPTS().push(appt);}
+  W.step=5;paint();
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeWiz()});
+$("#wiz").addEventListener("click",e=>{if(e.target.id==="wiz")closeWiz()});
+</script>
+</body>
+</html>

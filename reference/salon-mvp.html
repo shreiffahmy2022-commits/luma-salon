@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luma — Salon Manager</title>
+<style>
+:root{
+  --bg:#f6f5fa; --card:#ffffff; --ink:#1c1830; --muted:#7a7590; --line:#e9e6f2;
+  --brand:#6d4aff; --brand2:#8f73ff; --brand-soft:#efeaff; --teal:#0fb5a6; --teal-soft:#e2f7f5;
+  --amber:#f59e0b; --amber-soft:#fef3e0; --red:#e5484d; --red-soft:#fdebec; --green:#2f9e63; --green-soft:#e6f6ed;
+  --sidebar:#171233; --sidebar-ink:#bdb6de; --radius:14px;
+  --shadow:0 1px 2px rgba(28,24,48,.05),0 8px 24px -12px rgba(28,24,48,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font:14px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);display:flex}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(109,74,255,.12)}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#d6d2e6;border-radius:8px;border:2px solid var(--bg)}
+
+/* Sidebar */
+#sidebar{width:224px;min-width:224px;background:var(--sidebar);color:var(--sidebar-ink);display:flex;flex-direction:column;padding:18px 12px;gap:2px}
+#sidebar .logo{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;color:#fff}
+#sidebar .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--teal));display:grid;place-items:center;font-weight:800;color:#fff;font-size:16px}
+#sidebar .logo b{font-size:17px;letter-spacing:.3px}
+#sidebar .logo small{display:block;font-weight:400;font-size:10.5px;color:var(--sidebar-ink)}
+#sidebar .sec{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#6f679a;padding:14px 12px 5px}
+#sidebar .nav{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:10px;color:var(--sidebar-ink);font-weight:500;text-align:left}
+#sidebar .nav:hover{background:rgba(255,255,255,.06);color:#fff}
+#sidebar .nav.active{background:linear-gradient(90deg,rgba(109,74,255,.35),rgba(109,74,255,.12));color:#fff;box-shadow:inset 2px 0 0 var(--brand2)}
+#sidebar .nav .ic{width:18px;text-align:center;font-size:15px}
+#sidebar .foot{margin-top:auto;padding:12px;font-size:11px;color:#6f679a}
+
+/* Main */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;height:100vh}
+#topbar{display:flex;align-items:center;gap:14px;padding:14px 24px;background:transparent}
+#topbar h1{font-size:20px;font-weight:700}
+#topbar .sub{color:var(--muted);font-size:12.5px}
+#topbar .grow{flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;font-weight:600;font-size:13.5px;transition:filter .12s}
+.btn:hover{filter:brightness(.96)}
+.btn-primary{background:var(--brand);color:#fff;box-shadow:0 6px 14px -6px rgba(109,74,255,.55)}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn-soft{background:var(--brand-soft);color:var(--brand)}
+.btn-danger{background:var(--red-soft);color:var(--red)}
+.btn-sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+#content{flex:1;overflow:auto;padding:4px 24px 28px}
+
+/* Cards & layout */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card .card-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;font-size:14px}
+.card .card-b{padding:16px}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.kpi{padding:16px;display:flex;flex-direction:column;gap:6px}
+.kpi .v{font-size:23px;font-weight:800}
+.kpi .l{color:var(--muted);font-size:12.5px;font-weight:600}
+.kpi .d{font-size:11.5px;font-weight:600}
+.up{color:var(--green)}.down{color:var(--red)}
+.two{grid-template-columns:1.6fr 1fr}
+@media(max-width:1100px){.two{grid-template-columns:1fr}}
+
+/* Table */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#faf9fe}
+.right{text-align:right}
+.clickable{cursor:pointer}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:700}
+.chip.booked{background:var(--brand-soft);color:var(--brand)}
+.chip.confirmed{background:var(--teal-soft);color:var(--teal)}
+.chip.completed{background:var(--green-soft);color:var(--green)}
+.chip.cancelled{background:#eeedf3;color:var(--muted)}
+.chip.noshow{background:var(--red-soft);color:var(--red)}
+.chip.vip{background:var(--amber-soft);color:var(--amber)}
+.chip.new{background:var(--teal-soft);color:var(--teal)}
+.chip.gray{background:#eeedf3;color:var(--muted)}
+.avatar{width:34px;height:34px;border-radius:99px;display:inline-grid;place-items:center;font-weight:700;font-size:12.5px;color:#fff;flex:none}
+
+/* Calendar */
+.cal-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.cal-toolbar .date{font-weight:700;font-size:15px;min-width:210px;text-align:center}
+.cal-wrap{display:flex;overflow:auto;position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.cal-times{width:56px;flex:none;border-right:1px solid var(--line);padding-top:44px}
+.cal-times div{height:56px;font-size:10.5px;color:var(--muted);text-align:right;padding-right:8px;transform:translateY(-6px)}
+.cal-col{flex:1;min-width:170px;border-right:1px solid var(--line);position:relative}
+.cal-col:last-child{border-right:none}
+.cal-col .head{height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;position:sticky;top:0;background:#fff;z-index:3}
+.cal-slot{height:28px;border-bottom:1px dashed #f0eef7;cursor:pointer}
+.cal-slot:nth-child(even){border-bottom:1px solid var(--line)}
+.cal-slot:hover{background:var(--brand-soft)}
+.appt{position:absolute;left:5px;right:5px;border-radius:9px;padding:5px 8px;font-size:11.5px;color:#fff;overflow:hidden;cursor:pointer;box-shadow:0 3px 10px -4px rgba(28,24,48,.4);z-index:2}
+.appt b{display:block;font-size:11.5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.appt span{opacity:.85;font-size:10.5px}
+.appt.cancelled,.appt.noshow{opacity:.45;text-decoration:line-through}
+
+/* POS */
+.pos{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
+@media(max-width:1000px){.pos{grid-template-columns:1fr}}
+.pos-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.pos-tab{padding:7px 14px;border-radius:99px;background:#fff;border:1px solid var(--line);font-weight:600;font-size:12.5px}
+.pos-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pos-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;transition:transform .08s,box-shadow .12s}
+.pos-item:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--brand2)}
+.pos-item .nm{font-weight:700;font-size:13px;margin-bottom:2px}
+.pos-item .meta{color:var(--muted);font-size:11.5px}
+.pos-item .pr{font-weight:800;color:var(--brand);margin-top:8px}
+.cart-line{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.cart-line .nm{flex:1;min-width:0}
+.cart-line .nm b{font-size:13px;display:block}
+.cart-line .nm small{color:var(--muted)}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:22px;height:22px;border-radius:6px;background:#f0eef7;font-weight:800}
+.paybtn{flex:1;padding:9px;border-radius:9px;border:1.5px solid var(--line);font-weight:700;font-size:12.5px;background:#fff}
+.paybtn.active{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.totline{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.totline.big{font-size:17px;font-weight:800;padding-top:8px}
+
+/* Modal */
+#overlay{position:fixed;inset:0;background:rgba(20,16,40,.45);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:40px 16px;overflow:auto}
+#overlay.open{display:flex}
+#modal{background:#fff;border-radius:16px;width:100%;max-width:520px;box-shadow:0 24px 60px -12px rgba(20,16,40,.4);animation:pop .16s ease}
+@keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+#modal .m-h{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);font-weight:800;font-size:15.5px}
+#modal .m-h button{margin-left:auto;color:var(--muted);font-size:18px}
+#modal .m-b{padding:6px 20px 20px}
+#modal .m-f{display:flex;gap:10px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--line)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Toast */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-weight:600;font-size:13px;transition:transform .25s;z-index:99;box-shadow:0 10px 30px -8px rgba(0,0,0,.4)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.search{max-width:280px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:10px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10.5px;color:var(--muted)}
+.bar .b{width:100%;max-width:38px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,var(--brand2),var(--brand));min-height:3px}
+.bar.today .b{background:linear-gradient(180deg,#2dd4c3,var(--teal))}
+.svc-cat{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px}
+.mini{font-size:12px;color:var(--muted)}
+.link{color:var(--brand);font-weight:600;cursor:pointer}
+.flexh{display:flex;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<aside id="sidebar">
+  <div class="logo"><div class="mark">L</div><div><b>Luma</b><small>Salon Manager</small></div></div>
+  <div class="sec">Overview</div>
+  <button class="nav" data-v="dashboard"><span class="ic">▦</span>Dashboard</button>
+  <div class="sec">Front desk</div>
+  <button class="nav" data-v="calendar"><span class="ic">🗓</span>Calendar</button>
+  <button class="nav" data-v="pos"><span class="ic">🧾</span>Point of Sale</button>
+  <button class="nav" data-v="sales"><span class="ic">💳</span>Sales</button>
+  <div class="sec">Clients</div>
+  <button class="nav" data-v="customers"><span class="ic">👥</span>Customers</button>
+  <div class="sec">Back office</div>
+  <button class="nav" data-v="staff"><span class="ic">💼</span>Staff</button>
+  <button class="nav" data-v="payroll"><span class="ic">💰</span>Payroll</button>
+  <button class="nav" data-v="services"><span class="ic">✂️</span>Services</button>
+  <button class="nav" data-v="settings"><span class="ic">⚙️</span>Settings</button>
+  <div class="foot">MVP prototype · demo data<br>Single-branch mode</div>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <div><h1 id="pg-title">Dashboard</h1><div class="sub" id="pg-sub"></div></div>
+    <div class="grow"></div>
+    <button class="btn btn-ghost" onclick="openBooking()">＋ Booking</button>
+    <button class="btn btn-primary" onclick="go('pos')">New Sale</button>
+  </div>
+  <div id="content"></div>
+</div>
+
+<div id="overlay"><div id="modal"></div></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=> "id"+Math.random().toString(36).slice(2,9);
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayISO=()=>iso(new Date());
+const addDays=(isoStr,n)=>{const d=new Date(isoStr+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const minToStr=m=>{let h=Math.floor(m/60),mm=m%60,ap=h>=12?"PM":"AM";let h12=h%12||12;return h12+":"+pad(mm)+" "+ap};
+const dateLabel=isoStr=>new Date(isoStr+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+const monthLabel=ym=>new Date(ym+"-02T12:00:00").toLocaleDateString("en-GB",{month:"long",year:"numeric"});
+function money(v){return S.settings.currency+" "+Number(v||0).toLocaleString("en",{minimumFractionDigits:0,maximumFractionDigits:0})}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove("show"),2200)}
+function initials(n){return n.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase()}
+let _seed=42;function rnd(){_seed=(_seed*1103515245+12345)%2147483648;return _seed/2147483648}
+function pick(a){return a[Math.floor(rnd()*a.length)]}
+
+/* ================= seed data ================= */
+const STAFF_COLORS=["#6d4aff","#0fb5a6","#f59e0b","#e5484d","#2f80ed","#9b51e0"];
+function buildSeed(){
+  const staff=[
+    {id:"st1",name:"Sara Haddad",role:"Senior Hair Stylist",phone:"+971 50 111 2233",baseSalary:4500,commission:20,color:STAFF_COLORS[0],days:"Mon–Sat",hours:"10:00–20:00"},
+    {id:"st2",name:"Layla Mansour",role:"Nail Technician",phone:"+971 50 222 3344",baseSalary:3200,commission:15,color:STAFF_COLORS[1],days:"Tue–Sun",hours:"11:00–21:00"},
+    {id:"st3",name:"Omar Khalil",role:"Barber",phone:"+971 50 333 4455",baseSalary:3800,commission:18,color:STAFF_COLORS[2],days:"Mon–Sat",hours:"10:00–20:00"},
+    {id:"st4",name:"Nour El Sayed",role:"Esthetician",phone:"+971 50 444 5566",baseSalary:4000,commission:15,color:STAFF_COLORS[3],days:"Mon–Fri",hours:"10:00–19:00"},
+    {id:"st5",name:"Huda Aziz",role:"Massage Therapist",phone:"+971 50 555 6677",baseSalary:4200,commission:22,color:STAFF_COLORS[4],days:"Wed–Mon",hours:"12:00–21:00"}
+  ];
+  const services=[
+    {id:"sv1",cat:"Hair",name:"Haircut & Blowdry",dur:60,price:180},
+    {id:"sv2",cat:"Hair",name:"Full Color",dur:120,price:420},
+    {id:"sv3",cat:"Hair",name:"Highlights / Balayage",dur:150,price:600},
+    {id:"sv4",cat:"Hair",name:"Keratin Treatment",dur:120,price:750},
+    {id:"sv5",cat:"Nails",name:"Classic Manicure",dur:45,price:90},
+    {id:"sv6",cat:"Nails",name:"Gel Pedicure",dur:60,price:150},
+    {id:"sv7",cat:"Nails",name:"Nail Extensions",dur:90,price:280},
+    {id:"sv8",cat:"Barber",name:"Gents Cut & Beard",dur:45,price:120},
+    {id:"sv9",cat:"Barber",name:"Hot Towel Shave",dur:30,price:80},
+    {id:"sv10",cat:"Skin",name:"Deep Cleansing Facial",dur:60,price:320},
+    {id:"sv11",cat:"Skin",name:"Hydrafacial",dur:75,price:480},
+    {id:"sv12",cat:"Massage",name:"Relaxing Massage 60m",dur:60,price:300},
+    {id:"sv13",cat:"Massage",name:"Deep Tissue 90m",dur:90,price:430},
+    {id:"sv14",cat:"Skin",name:"Brow Shaping & Tint",dur:30,price:110}
+  ];
+  const products=[
+    {id:"pr1",name:"Argan Repair Shampoo",price:85,stock:24},
+    {id:"pr2",name:"Keratin Hair Mask",price:130,stock:12},
+    {id:"pr3",name:"Cuticle Oil",price:45,stock:30},
+    {id:"pr4",name:"Vitamin C Serum",price:210,stock:9},
+    {id:"pr5",name:"Beard Balm",price:70,stock:18}
+  ];
+  const custNames=["Mona Al Rashid","Dana Suleiman","Aisha Karim","Rania Fares","Yousef Nader","Lina Habib","Farah Odeh","Khaled Amin","Salma Idris","Noor Barakat","Hala Jaber","Tariq Aswad"];
+  const customers=custNames.map((n,i)=>({
+    id:"c"+(i+1),name:n,
+    phone:"+971 5"+(i%5)+" "+(200+i*7)+" "+(1000+i*311),
+    email:n.toLowerCase().replace(/[^a-z]+/g,".")+"@mail.com",
+    tag:i<2?"vip":(i>9?"new":""),
+    notes:i===0?"Prefers Sara. Allergic to ammonia-based color.":(i===3?"Always books hydrafacial monthly.":"")
+  }));
+  const today=todayISO();
+  const appointments=[];const sales=[];
+  // appointments across -6..+5 days
+  for(let off=-6;off<=5;off++){
+    const date=addDays(today,off);
+    const n=3+Math.floor(rnd()*4);
+    const used={};
+    for(let k=0;k<n;k++){
+      const st=pick(staff),sv=pick(services),cu=pick(customers);
+      let start=600+30*Math.floor(rnd()*18); // 10:00–19:00
+      const key=st.id+start;if(used[key])continue;used[key]=1;
+      let status;
+      if(off<0)status=rnd()<.82?"completed":(rnd()<.5?"cancelled":"noshow");
+      else if(off===0)status=start<new Date().getHours()*60?"completed":(rnd()<.5?"confirmed":"booked");
+      else status=rnd()<.4?"confirmed":"booked";
+      appointments.push({id:uid(),date,start,staffId:st.id,serviceId:sv.id,customerId:cu.id,status,notes:""});
+    }
+  }
+  // sales over current + previous month
+  const now=new Date();
+  for(let m=0;m<2;m++){
+    const base=new Date(now.getFullYear(),now.getMonth()-m,1);
+    const daysIn=m===0?now.getDate():new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
+    for(let d=1;d<=daysIn;d++){
+      const cnt=1+Math.floor(rnd()*3);
+      for(let k=0;k<cnt;k++){
+        const st=pick(staff),cu=pick(customers);
+        const items=[];
+        const sv=pick(services);
+        items.push({type:"service",refId:sv.id,name:sv.name,price:sv.price,qty:1,staffId:st.id});
+        if(rnd()<.3){const pr=pick(products);items.push({type:"product",refId:pr.id,name:pr.name,price:pr.price,qty:1,staffId:st.id});}
+        const sub=items.reduce((a,i)=>a+i.price*i.qty,0);
+        const disc=rnd()<.15?Math.round(sub*.1):0;
+        sales.push({id:uid(),date:iso(new Date(base.getFullYear(),base.getMonth(),d)),time:(10+Math.floor(rnd()*10))+":"+pad(Math.floor(rnd()*60)),customerId:cu.id,items,discount:disc,method:pick(["Cash","Card","Card","Link"]),total:sub-disc});
+      }
+    }
+  }
+  sales.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+  return {staff,services,products,customers,appointments,sales};
+}
+
+/* ================= state ================= */
+let S={view:"dashboard",calDate:todayISO(),cart:[],posTab:"All",payMethod:"Card",cartCustomer:"",cartDiscount:0,custSearch:"",payrollMonth:todayISO().slice(0,7),
+  settings:{name:"Luma Beauty Lounge",currency:"AED"},data:null};
+function save(){try{localStorage.setItem("lumaMVP",JSON.stringify({settings:S.settings,data:S.data}))}catch(e){}}
+(function init(){
+  let ok=false;
+  try{const raw=localStorage.getItem("lumaMVP");if(raw){const p=JSON.parse(raw);if(p&&p.data&&p.data.staff){S.settings=p.settings;S.data=p.data;ok=true}}}catch(e){}
+  if(!ok){S.data=buildSeed();save()}
+  // import bookings queued by the public booking page (booking-page.html)
+  try{
+    const q=JSON.parse(localStorage.getItem("lumaBookings")||"[]");
+    if(q.length){
+      q.forEach(b=>{
+        if(S.data.appointments.some(a=>a.id===b.id))return;
+        let c=S.data.customers.find(x=>b.clientPhone&&x.phone.replace(/\s/g,"")===b.clientPhone.replace(/\s/g,""));
+        if(!c&&b.clientName){c={id:"c"+uid(),name:b.clientName,phone:b.clientPhone||"",email:b.clientEmail||"",tag:"new",notes:""};S.data.customers.push(c)}
+        S.data.appointments.push({id:b.id,date:b.date,start:b.start,staffId:b.staffId,serviceId:b.serviceId,status:"booked",notes:b.notes||"(online booking)",customerId:c?c.id:(S.data.customers[0]&&S.data.customers[0].id)});
+      });
+      localStorage.removeItem("lumaBookings");save();
+      setTimeout(()=>toast(q.length+" online booking"+(q.length>1?"s":"")+" imported ✓"),400);
+    }
+  }catch(e){}
+})();
+
+const D=()=>S.data;
+const getStaff=id=>D().staff.find(s=>s.id===id);
+const getSvc=id=>D().services.find(s=>s.id===id);
+const getCust=id=>D().customers.find(s=>s.id===id);
+
+/* ================= shell ================= */
+const TITLES={dashboard:["Dashboard","Business at a glance"],calendar:["Calendar & Bookings","Day view by staff member"],pos:["Point of Sale","Ring up services and retail"],sales:["Sales","All transactions"],customers:["Customers","Client profiles & history"],staff:["Staff","Team, schedules & commissions"],payroll:["Payroll","Base salaries + commissions"],services:["Service Menu","What you offer"],settings:["Settings","Business preferences"]};
+function go(v){S.view=v;render()}
+document.querySelectorAll("#sidebar .nav").forEach(b=>b.onclick=()=>go(b.dataset.v));
+function render(){
+  document.querySelectorAll("#sidebar .nav").forEach(b=>b.classList.toggle("active",b.dataset.v===S.view));
+  $("#pg-title").textContent=TITLES[S.view][0];
+  $("#pg-sub").textContent=TITLES[S.view][1];
+  const R={dashboard:vDashboard,calendar:vCalendar,pos:vPOS,sales:vSales,customers:vCustomers,staff:vStaffPage,payroll:vPayroll,services:vServices,settings:vSettings};
+  $("#content").innerHTML=R[S.view]();
+  if(S.view==="calendar")requestAnimationFrame(()=>{const w=$(".cal-wrap");if(w)w.scrollTop=170});
+}
+
+/* ================= dashboard ================= */
+function revenueOn(dateIso){return D().sales.filter(s=>s.date===dateIso).reduce((a,s)=>a+s.total,0)}
+function vDashboard(){
+  const t=todayISO();
+  const apptsToday=D().appointments.filter(a=>a.date===t&&a.status!=="cancelled");
+  const revToday=revenueOn(t);
+  let rev7=0;for(let i=0;i<7;i++)rev7+=revenueOn(addDays(t,-i));
+  let revPrev7=0;for(let i=7;i<14;i++)revPrev7+=revenueOn(addDays(t,-i));
+  const delta=revPrev7?Math.round((rev7-revPrev7)/revPrev7*100):0;
+  const monthSales=D().sales.filter(s=>s.date.slice(0,7)===t.slice(0,7));
+  const avgTicket=monthSales.length?Math.round(monthSales.reduce((a,s)=>a+s.total,0)/monthSales.length):0;
+  // 7-day bars
+  let maxR=1,days=[];
+  for(let i=6;i>=0;i--){const dt=addDays(t,-i);const r=revenueOn(dt);maxR=Math.max(maxR,r);days.push({dt,r})}
+  const bars=days.map(d=>`<div class="bar ${d.dt===t?"today":""}"><div style="flex:1;display:flex;align-items:flex-end;width:100%;justify-content:center"><div class="b" style="height:${Math.round(d.r/maxR*100)}%"></div></div><div>${new Date(d.dt+"T12:00:00").toLocaleDateString("en",{weekday:"short"})}</div></div>`).join("");
+  // top services this month
+  const svcCount={};
+  monthSales.forEach(s=>s.items.forEach(i=>{if(i.type==="service"){svcCount[i.name]=svcCount[i.name]||{n:0,v:0};svcCount[i.name].n+=i.qty;svcCount[i.name].v+=i.price*i.qty}}));
+  const top=Object.entries(svcCount).sort((a,b)=>b[1].v-a[1].v).slice(0,5);
+  const upcoming=apptsToday.filter(a=>a.status!=="completed").sort((a,b)=>a.start-b.start).slice(0,6);
+  return `
+  <div class="grid kpis" style="margin-bottom:16px">
+    <div class="card kpi"><div class="l">Today's revenue</div><div class="v">${money(revToday)}</div><div class="d mini">${D().sales.filter(s=>s.date===t).length} transactions</div></div>
+    <div class="card kpi"><div class="l">Appointments today</div><div class="v">${apptsToday.length}</div><div class="d mini">${apptsToday.filter(a=>a.status==="completed").length} done · ${apptsToday.filter(a=>a.status!=="completed").length} upcoming</div></div>
+    <div class="card kpi"><div class="l">Last 7 days</div><div class="v">${money(rev7)}</div><div class="d ${delta>=0?"up":"down"}">${delta>=0?"▲":"▼"} ${Math.abs(delta)}% vs prior week</div></div>
+    <div class="card kpi"><div class="l">Avg ticket (month)</div><div class="v">${money(avgTicket)}</div><div class="d mini">${monthSales.length} sales this month</div></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><div class="card-h">Revenue — last 7 days</div><div class="card-b"><div class="bars">${bars}</div></div></div>
+    <div class="card"><div class="card-h">Top services this month</div><div class="card-b" style="padding-top:6px">
+      ${top.length?top.map(([n,x])=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line)"><span>${esc(n)} <span class="mini">×${x.n}</span></span><b>${money(x.v)}</b></div>`).join(""):'<div class="empty">No sales yet</div>'}
+    </div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="card-h">Next up today <span class="mini" style="font-weight:400">· ${dateLabel(t)}</span><span style="flex:1"></span><button class="btn btn-soft btn-sm" onclick="go('calendar')">Open calendar</button></div>
+  ${upcoming.length?`<table><thead><tr><th>Time</th><th>Client</th><th>Service</th><th>Staff</th><th>Status</th></tr></thead><tbody>
+  ${upcoming.map(a=>{const c=getCust(a.customerId),sv=getSvc(a.serviceId),st=getStaff(a.staffId);return `<tr class="clickable" onclick="openBooking('${a.id}')"><td><b>${minToStr(a.start)}</b></td><td>${esc(c?c.name:"—")}</td><td>${esc(sv?sv.name:"—")}</td><td><span class="flexh"><span class="avatar" style="background:${st.color};width:24px;height:24px;font-size:10px">${initials(st.name)}</span>${esc(st.name.split(" ")[0])}</span></td><td>${chip(a.status)}</td></tr>`}).join("")}
+  </tbody></table>`:'<div class="empty">No more appointments today 🎉</div>'}</div>`;
+}
+function chip(s){const lbl={booked:"Booked",confirmed:"Confirmed",completed:"Completed",cancelled:"Cancelled",noshow:"No-show"};return `<span class="chip ${s}">${lbl[s]||s}</span>`}
+
+/* ================= calendar ================= */
+const DAY_START=600,DAY_END=1260,SLOT=30,SLOT_H=28;
+function calShift(n){S.calDate=addDays(S.calDate,n);render()}
+function vCalendar(){
+  const date=S.calDate;
+  const appts=D().appointments.filter(a=>a.date===date);
+  let times="";for(let m=DAY_START;m<DAY_END;m+=60)times+=`<div>${minToStr(m)}</div>`;
+  const cols=D().staff.map(st=>{
+    let slots="";
+    for(let m=DAY_START;m<DAY_END;m+=SLOT)slots+=`<div class="cal-slot" onclick="openBooking(null,'${date}',${m},'${st.id}')"></div>`;
+    const blocks=appts.filter(a=>a.staffId===st.id).map(a=>{
+      const sv=getSvc(a.serviceId),c=getCust(a.customerId);
+      const top=44+(a.start-DAY_START)/SLOT*SLOT_H;
+      const h=Math.max(26,(sv?sv.dur:30)/SLOT*SLOT_H-3);
+      return `<div class="appt ${a.status}" style="top:${top}px;height:${h}px;background:${st.color}" onclick="openBooking('${a.id}')" title="${esc(sv?sv.name:"")}"><b>${esc(c?c.name:"Walk-in")}</b><span>${minToStr(a.start)} · ${esc(sv?sv.name:"")}</span></div>`;
+    }).join("");
+    return `<div class="cal-col"><div class="head"><span class="avatar" style="background:${st.color};width:26px;height:26px;font-size:10.5px">${initials(st.name)}</span>${esc(st.name.split(" ")[0])}</div>${slots}${blocks}</div>`;
+  }).join("");
+  return `
+  <div class="cal-toolbar">
+    <button class="btn btn-ghost btn-sm" onclick="calShift(-1)">‹</button>
+    <div class="date">${dateLabel(date)}${date===todayISO()?' <span class="chip new">Today</span>':""}</div>
+    <button class="btn btn-ghost btn-sm" onclick="calShift(1)">›</button>
+    <button class="btn btn-ghost btn-sm" onclick="S.calDate=todayISO();render()">Today</button>
+    <span style="flex:1"></span>
+    <span class="mini">${appts.filter(a=>a.status!=="cancelled").length} appointments · click an empty slot to book</span>
+    <button class="btn btn-primary btn-sm" onclick="openBooking(null,'${date}')">＋ New booking</button>
+  </div>
+  <div class="cal-wrap" style="max-height:calc(100vh - 210px)">
+    <div class="cal-times">${times}</div>${cols}
+  </div>`;
+}
+
+/* booking modal */
+function openBooking(apptId,date,start,staffId){
+  const a=apptId?D().appointments.find(x=>x.id===apptId):null;
+  const v={date:a?a.date:(date||todayISO()),start:a?a.start:(start||660),staffId:a?a.staffId:(staffId||D().staff[0].id),serviceId:a?a.serviceId:D().services[0].id,customerId:a?a.customerId:(D().customers[0]&&D().customers[0].id),status:a?a.status:"booked",notes:a?a.notes:""};
+  let timeOpts="";for(let m=DAY_START;m<DAY_END;m+=15)timeOpts+=`<option value="${m}" ${m===v.start?"selected":""}>${minToStr(m)}</option>`;
+  openModal(`
+    <div class="m-h">${a?"Edit booking":"New booking"}<button onclick="closeModal()">✕</button></div>
+    <div class="m-b">
+      <label>Client</label>
+      <select id="bk-cust">${D().customers.map(c=>`<option value="${c.id}" ${c.id===v.customerId?"selected":""}>${esc(c.name)}</option>`).join("")}</select>
+      <div class="mini" style="margin-top:4px">Not listed? <span class="link" onclick="closeModal();openCustomer(null,true)">Add a new client</span></div>
+      <div class="row2">
+        <div><label>Service</label><select id="bk-svc">${D().services.map(s=>`<option value="${s.id}" ${s.id===v.serviceId?"selected":""}>${esc(s.name)} (${s.dur}m · ${money(s.price)})</option>`).join("")}</select></div>
+        <div><label>Staff</label><select id="bk-staff">${D().staff.map(s=>`<option value="${s.id}" ${s.id===v.staffId?"selected":""}>${esc(s.name)}</option>`).join("")}</select></div>
+      </div>
+      <div class="row2">
+        <div><label>Date</label><input type="date" id="bk-date" value="${v.date}"></div>
+        <div><label>Time</label><select id="bk-time">${timeOpts}</select></div>
+      </div>
+      <div class="row2">
+        <div><label>Status</label><select id="bk-status">
+          ${["booked","confirmed","completed","cancelled","noshow"].map(s=>`<option value="${s}" ${s===v.status?"selected":""}>${s==="noshow"?"No-show":s[0].toUpperCase()+s.slice(1)}</option>`).join("")}
+        </select></div>
+        <div><label>Notes</label><input id="bk-notes" value="${esc(v.notes)}" placeholder="Optional"></div>
+      </div>
+    </div>
+    <div class="m-f">
+      ${a?`<button class="btn btn-danger" onclick="delBooking('${a.id}')">Delete</button>`:""}
+      ${a?`<button class="btn btn-soft" onclick="chargeBooking('${a.id}')">Checkout →</button>`:""}
+      <span style="flex:1"></span>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBooking('${a?a.id:""}')">${a?"Save changes":"Book appointment"}</button>
+    </div>`);
+}
+function saveBooking(id){
+  const rec={date:$("#bk-date").value,start:+$("#bk-time").value,staffId:$("#bk-staff").value,serviceId:$("#bk-svc").value,customerId:$("#bk-cust").value,status:$("#bk-status").value,notes:$("#bk-notes").value};
+  if(!rec.date){toast("Pick a date");return}
+  const svc=getSvc(rec.serviceId);
+  const clash=D().appointments.find(a=>a.id!==id&&a.date===rec.date&&a.staffId===rec.staffId&&a.status!=="cancelled"&&rec.start<a.start+(getSvc(a.serviceId)||{dur:30}).dur&&a.start<rec.start+svc.dur);
+  if(clash&&!confirm("This overlaps another appointment for "+getStaff(rec.staffId).name+". Book anyway?"))return;
+  if(id){Object.assign(D().appointments.find(a=>a.id===id),rec);toast("Booking updated")}
+  else{D().appointments.push({id:uid(),...rec});toast("Appointment booked ✓")}
+  save();closeModal();S.calDate=rec.date;if(S.view!=="calendar")S.view="calendar";render();
+}
+function delBooking(id){if(!confirm("Delete this booking?"))return;S.data.appointments=D().appointments.filter(a=>a.id!==id);save();closeModal();render();toast("Booking deleted")}
+function chargeBooking(id){
+  const a=D().appointments.find(x=>x.id===id);if(!a)return;
+  const sv=getSvc(a.serviceId);
+  S.cart=[{type:"service",refId:sv.id,name:sv.name,price:sv.price,qty:1,staffId:a.staffId}];
+  S.cartCustomer=a.customerId;a.status="completed";save();closeModal();go("pos");toast("Added to cart — take payment");
+}
+
+/* ================= POS ================= */
+function vPOS(){
+  const cats=["All",...new Set(D().services.map(s=>s.cat)),"Retail"];
+  const items=[];
+  if(S.posTab!=="Retail")D().services.filter(s=>S.posTab==="All"||s.cat===S.posTab).forEach(s=>items.push({type:"service",id:s.id,name:s.name,meta:s.cat+" · "+s.dur+" min",price:s.price}));
+  if(S.posTab==="All"||S.posTab==="Retail")D().products.forEach(p=>items.push({type:"product",id:p.id,name:p.name,meta:"Retail · "+p.stock+" in stock",price:p.price}));
+  const sub=S.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const disc=Math.min(sub,Math.round(sub*(S.cartDiscount||0)/100));
+  return `<div class="pos">
+    <div>
+      <div class="pos-tabs">${cats.map(c=>`<button class="pos-tab ${c===S.posTab?"active":""}" onclick="S.posTab='${c}';render()">${c}</button>`).join("")}</div>
+      <div class="pos-grid">${items.map(i=>`<div class="pos-item" onclick="addCart('${i.type}','${i.id}')"><div class="nm">${esc(i.name)}</div><div class="meta">${esc(i.meta)}</div><div class="pr">${money(i.price)}</div></div>`).join("")}</div>
+    </div>
+    <div class="card"><div class="card-h">Current sale ${S.cart.length?`<span class="chip gray">${S.cart.length} item${S.cart.length>1?"s":""}</span>`:""}<span style="flex:1"></span>${S.cart.length?`<button class="btn-sm btn btn-ghost" onclick="S.cart=[];render()">Clear</button>`:""}</div>
+      <div class="card-b">
+        <label style="margin-top:0">Client</label>
+        <select onchange="S.cartCustomer=this.value" >${['<option value="">Walk-in</option>',...D().customers.map(c=>`<option value="${c.id}" ${c.id===S.cartCustomer?"selected":""}>${esc(c.name)}</option>`)].join("")}</select>
+        <div style="margin:12px 0 4px">
+        ${S.cart.length?S.cart.map((i,ix)=>`<div class="cart-line">
+          <div class="nm"><b>${esc(i.name)}</b><small>${money(i.price)} · ${esc((getStaff(i.staffId)||{name:"—"}).name.split(" ")[0])}</small></div>
+          <select style="width:92px;padding:4px 6px;font-size:12px" onchange="S.cart[${ix}].staffId=this.value;render()">${D().staff.map(s=>`<option value="${s.id}" ${s.id===i.staffId?"selected":""}>${esc(s.name.split(" ")[0])}</option>`).join("")}</select>
+          <div class="qty"><button onclick="qty(${ix},-1)">−</button><b>${i.qty}</b><button onclick="qty(${ix},1)">＋</button></div>
+        </div>`).join(""):'<div class="empty" style="padding:20px">Tap items to add them</div>'}
+        </div>
+        <div class="row2">
+          <div><label>Discount %</label><input type="number" min="0" max="100" value="${S.cartDiscount||0}" onchange="S.cartDiscount=+this.value||0;render()"></div>
+          <div><label>Payment</label><div style="display:flex;gap:6px">${["Cash","Card","Link"].map(m=>`<button class="paybtn ${S.payMethod===m?"active":""}" onclick="S.payMethod='${m}';render()">${m}</button>`).join("")}</div></div>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">
+          <div class="totline"><span>Subtotal</span><span>${money(sub)}</span></div>
+          <div class="totline"><span>Discount</span><span>− ${money(disc)}</span></div>
+          <div class="totline big"><span>Total</span><span>${money(sub-disc)}</span></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px;padding:12px" onclick="checkout()" ${S.cart.length?"":"disabled style='width:100%;justify-content:center;margin-top:12px;padding:12px;opacity:.5'"}>Charge ${money(sub-disc)}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function addCart(type,id){
+  const src=type==="service"?getSvc(id):D().products.find(p=>p.id===id);
+  const ex=S.cart.find(i=>i.refId===id&&i.type===type);
+  if(ex)ex.qty++;else S.cart.push({type,refId:id,name:src.name,price:src.price,qty:1,staffId:D().staff[0].id});
+  render();
+}
+function qty(ix,d){S.cart[ix].qty+=d;if(S.cart[ix].qty<1)S.cart.splice(ix,1);render()}
+function checkout(){
+  if(!S.cart.length)return;
+  const sub=S.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const disc=Math.min(sub,Math.round(sub*(S.cartDiscount||0)/100));
+  const now=new Date();
+  const sale={id:uid(),date:todayISO(),time:pad(now.getHours())+":"+pad(now.getMinutes()),customerId:S.cartCustomer||null,items:S.cart,discount:disc,method:S.payMethod,total:sub-disc};
+  D().sales.unshift(sale);
+  sale.items.forEach(i=>{if(i.type==="product"){const p=D().products.find(x=>x.id===i.refId);if(p)p.stock=Math.max(0,p.stock-i.qty)}});
+  S.cart=[];S.cartDiscount=0;S.cartCustomer="";save();render();showReceipt(sale.id);toast("Payment recorded ✓");
+}
+function showReceipt(id){
+  const s=D().sales.find(x=>x.id===id);if(!s)return;
+  const c=s.customerId?getCust(s.customerId):null;
+  openModal(`
+   <div class="m-h">Receipt <span class="mini" style="font-weight:400;margin-left:8px">#${s.id.slice(-6).toUpperCase()}</span><button onclick="closeModal()">✕</button></div>
+   <div class="m-b" style="padding-top:14px">
+     <div style="text-align:center;margin-bottom:12px"><b style="font-size:16px">${esc(S.settings.name)}</b><div class="mini">${dateLabel(s.date)} · ${s.time} · ${s.method}</div><div class="mini">Client: ${esc(c?c.name:"Walk-in")}</div></div>
+     ${s.items.map(i=>`<div class="totline"><span>${esc(i.name)} ×${i.qty} <span class="mini">(${esc((getStaff(i.staffId)||{name:"—"}).name.split(" ")[0])})</span></span><span>${money(i.price*i.qty)}</span></div>`).join("")}
+     <div class="totline" style="border-top:1px dashed var(--line);margin-top:6px;padding-top:8px"><span>Discount</span><span>− ${money(s.discount)}</span></div>
+     <div class="totline big"><span>Total paid</span><span>${money(s.total)}</span></div>
+   </div>
+   <div class="m-f"><button class="btn btn-ghost" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="window.print()">Print</button></div>`);
+}
+function vSales(){
+  const rows=D().sales.slice(0,120);
+  const t=todayISO();const todayTot=D().sales.filter(s=>s.date===t).reduce((a,s)=>a+s.total,0);
+  return `<div class="card"><div class="card-h">Transactions <span class="chip gray">${D().sales.length} total</span><span style="flex:1"></span><span class="mini">Today: <b>${money(todayTot)}</b></span></div>
+  <table><thead><tr><th>Date</th><th>Client</th><th>Items</th><th>Method</th><th class="right">Total</th></tr></thead><tbody>
+  ${rows.map(s=>{const c=s.customerId?getCust(s.customerId):null;return `<tr class="clickable" onclick="showReceipt('${s.id}')"><td>${dateLabel(s.date)} <span class="mini">${s.time}</span></td><td>${esc(c?c.name:"Walk-in")}</td><td>${s.items.map(i=>esc(i.name)).join(", ")}</td><td><span class="chip gray">${s.method}</span></td><td class="right"><b>${money(s.total)}</b></td></tr>`}).join("")}
+  </tbody></table></div>`;
+}
+
+/* ================= customers ================= */
+function vCustomers(){
+  const q=(S.custSearch||"").toLowerCase();
+  const list=D().customers.filter(c=>!q||c.name.toLowerCase().includes(q)||c.phone.includes(q));
+  return `<div class="flexh" style="margin-bottom:14px">
+    <input class="search" placeholder="Search name or phone…" value="${esc(S.custSearch)}" oninput="S.custSearch=this.value;render();this.focus();this.setSelectionRange(99,99)">
+    <span style="flex:1"></span><button class="btn btn-primary" onclick="openCustomer()">＋ Add customer</button></div>
+  <div class="card"><table><thead><tr><th>Client</th><th>Phone</th><th>Visits</th><th>Lifetime spend</th><th>Last visit</th><th></th></tr></thead><tbody>
+  ${list.map(c=>{
+    const visits=D().appointments.filter(a=>a.customerId===c.id&&a.status==="completed").length;
+    const spend=D().sales.filter(s=>s.customerId===c.id).reduce((a,s)=>a+s.total,0);
+    const last=D().appointments.filter(a=>a.customerId===c.id&&a.status==="completed").map(a=>a.date).sort().pop();
+    return `<tr class="clickable" onclick="openCustProfile('${c.id}')">
+      <td><span class="flexh"><span class="avatar" style="background:${STAFF_COLORS[(c.name.length)%6]}">${initials(c.name)}</span><span><b>${esc(c.name)}</b>${c.tag?` <span class="chip ${c.tag}">${c.tag.toUpperCase()}</span>`:""}<div class="mini">${esc(c.email)}</div></span></span></td>
+      <td>${esc(c.phone)}</td><td>${visits}</td><td><b>${money(spend)}</b></td><td>${last?dateLabel(last):"—"}</td>
+      <td class="right"><button class="btn btn-soft btn-sm" onclick="event.stopPropagation();openCustomer('${c.id}')">Edit</button></td></tr>`}).join("")}
+  ${list.length?"":'<tr><td colspan="6"><div class="empty">No customers match</div></td></tr>'}
+  </tbody></table></div>`;
+}
+function openCustProfile(id){
+  const c=getCust(id);if(!c)return;
+  const appts=D().appointments.filter(a=>a.customerId===id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  const salesC=D().sales.filter(s=>s.customerId===id);
+  const spend=salesC.reduce((a,s)=>a+s.total,0);
+  openModal(`
+  <div class="m-h"><span class="avatar" style="background:${STAFF_COLORS[c.name.length%6]};margin-right:10px">${initials(c.name)}</span>${esc(c.name)} ${c.tag?`<span class="chip ${c.tag}" style="margin-left:8px">${c.tag.toUpperCase()}</span>`:""}<button onclick="closeModal()">✕</button></div>
+  <div class="m-b" style="padding-top:12px">
+    <div class="mini">${esc(c.phone)} · ${esc(c.email)}</div>
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin:12px 0">
+      <div class="card kpi" style="padding:10px"><div class="l">Visits</div><div class="v" style="font-size:18px">${D().appointments.filter(a=>a.customerId===id&&a.status==="completed").length}</div></div>
+      <div class="card kpi" style="padding:10px"><div class="l">Spend</div><div class="v" style="font-size:18px">${money(spend)}</div></div>
+      <div class="card kpi" style="padding:10px"><div class="l">No-shows</div><div class="v" style="font-size:18px">${D().appointments.filter(a=>a.customerId===id&&a.status==="noshow").length}</div></div>
+    </div>
+    ${c.notes?`<div style="background:var(--amber-soft);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:12px"><b>Note:</b> ${esc(c.notes)}</div>`:""}
+    <label>Recent appointments</label>
+    ${appts.length?appts.map(a=>{const sv=getSvc(a.serviceId),st=getStaff(a.staffId);return `<div class="totline"><span>${dateLabel(a.date)} · ${esc(sv?sv.name:"—")} <span class="mini">w/ ${esc(st?st.name.split(" ")[0]:"—")}</span></span>${chip(a.status)}</div>`}).join(""):'<div class="mini">No history yet</div>'}
+  </div>
+  <div class="m-f"><button class="btn btn-ghost" onclick="closeModal();openCustomer('${id}')">Edit profile</button><span style="flex:1"></span><button class="btn btn-primary" onclick="closeModal();openBooking(null,undefined,undefined,undefined);setTimeout(()=>{const el=document.querySelector('#bk-cust');if(el)el.value='${id}'},0)">Book appointment</button></div>`);
+}
+function openCustomer(id,fromBooking){
+  const c=id?getCust(id):{name:"",phone:"",email:"",tag:"",notes:""};
+  openModal(`
+  <div class="m-h">${id?"Edit customer":"New customer"}<button onclick="closeModal()">✕</button></div>
+  <div class="m-b">
+    <label>Full name</label><input id="cu-name" value="${esc(c.name)}" placeholder="e.g. Mona Al Rashid">
+    <div class="row2"><div><label>Phone</label><input id="cu-phone" value="${esc(c.phone)}"></div><div><label>Email</label><input id="cu-email" value="${esc(c.email)}"></div></div>
+    <div class="row2"><div><label>Tag</label><select id="cu-tag"><option value="">None</option><option value="vip" ${c.tag==="vip"?"selected":""}>VIP</option><option value="new" ${c.tag==="new"?"selected":""}>New</option></select></div><div></div></div>
+    <label>Notes (allergies, preferences…)</label><textarea id="cu-notes" rows="2">${esc(c.notes)}</textarea>
+  </div>
+  <div class="m-f">${id?`<button class="btn btn-danger" onclick="delCustomer('${id}')">Delete</button><span style="flex:1"></span>`:""}<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCustomer('${id||""}',${!!fromBooking})">Save</button></div>`);
+}
+function saveCustomer(id,fromBooking){
+  const rec={name:$("#cu-name").value.trim(),phone:$("#cu-phone").value.trim(),email:$("#cu-email").value.trim(),tag:$("#cu-tag").value,notes:$("#cu-notes").value.trim()};
+  if(!rec.name){toast("Name is required");return}
+  let newId=id;
+  if(id)Object.assign(getCust(id),rec);
+  else{newId="c"+uid();D().customers.push({id:newId,...rec})}
+  save();closeModal();toast("Customer saved ✓");
+  if(fromBooking){openBooking();setTimeout(()=>{const el=$("#bk-cust");if(el)el.value=newId},0)}else render();
+}
+function delCustomer(id){if(!confirm("Delete this customer? Their history stays on past records."))return;S.data.customers=D().customers.filter(c=>c.id!==id);save();closeModal();render();toast("Customer deleted")}
+
+/* ================= staff & payroll ================= */
+function vStaffPage(){
+  return `<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn btn-primary" onclick="openStaff()">＋ Add staff</button></div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+  ${D().staff.map(st=>{
+    const mo=todayISO().slice(0,7);
+    const svcRev=D().sales.filter(s=>s.date.slice(0,7)===mo).reduce((a,s)=>a+s.items.filter(i=>i.staffId===st.id).reduce((x,i)=>x+i.price*i.qty,0),0);
+    const bkgs=D().appointments.filter(a=>a.staffId===st.id&&a.date.slice(0,7)===mo&&a.status!=="cancelled").length;
+    return `<div class="card card-b" style="padding:18px">
+      <div class="flexh"><span class="avatar" style="background:${st.color};width:44px;height:44px;font-size:15px">${initials(st.name)}</span>
+      <div><b style="font-size:15px">${esc(st.name)}</b><div class="mini">${esc(st.role)}</div></div>
+      <span style="flex:1"></span><button class="btn btn-soft btn-sm" onclick="openStaff('${st.id}')">Edit</button></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+        <div><div class="mini">Schedule</div><b style="font-size:12.5px">${esc(st.days)} · ${esc(st.hours)}</b></div>
+        <div><div class="mini">Commission</div><b>${st.commission}%</b></div>
+        <div><div class="mini">Bookings (mo.)</div><b>${bkgs}</b></div>
+        <div><div class="mini">Revenue (mo.)</div><b>${money(svcRev)}</b></div>
+      </div></div>`}).join("")}
+  </div>`;
+}
+function openStaff(id){
+  const s=id?getStaff(id):{name:"",role:"",phone:"",baseSalary:3000,commission:15,days:"Mon–Sat",hours:"10:00–20:00",color:STAFF_COLORS[D().staff.length%6]};
+  openModal(`
+  <div class="m-h">${id?"Edit staff":"New staff member"}<button onclick="closeModal()">✕</button></div>
+  <div class="m-b">
+    <label>Full name</label><input id="stf-name" value="${esc(s.name)}">
+    <div class="row2"><div><label>Role</label><input id="stf-role" value="${esc(s.role)}" placeholder="e.g. Hair Stylist"></div><div><label>Phone</label><input id="stf-phone" value="${esc(s.phone)}"></div></div>
+    <div class="row2"><div><label>Working days</label><input id="stf-days" value="${esc(s.days)}"></div><div><label>Hours</label><input id="stf-hours" value="${esc(s.hours)}"></div></div>
+    <div class="row2"><div><label>Base salary (${S.settings.currency}/mo)</label><input type="number" id="stf-base" value="${s.baseSalary}"></div><div><label>Commission %</label><input type="number" id="stf-comm" value="${s.commission}"></div></div>
+  </div>
+  <div class="m-f">${id?`<button class="btn btn-danger" onclick="delStaff('${id}')">Delete</button><span style="flex:1"></span>`:""}<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveStaff('${id||""}')">Save</button></div>`);
+}
+function saveStaff(id){
+  const rec={name:$("#stf-name").value.trim(),role:$("#stf-role").value.trim(),phone:$("#stf-phone").value.trim(),days:$("#stf-days").value,hours:$("#stf-hours").value,baseSalary:+$("#stf-base").value||0,commission:+$("#stf-comm").value||0};
+  if(!rec.name){toast("Name is required");return}
+  if(id)Object.assign(getStaff(id),rec);
+  else D().staff.push({id:"st"+uid(),color:STAFF_COLORS[D().staff.length%6],...rec});
+  save();closeModal();render();toast("Staff saved ✓");
+}
+function delStaff(id){if(D().staff.length<=1){toast("You need at least one staff member");return}if(!confirm("Remove this staff member?"))return;S.data.staff=D().staff.filter(s=>s.id!==id);save();closeModal();render();toast("Staff removed")}
+
+function vPayroll(){
+  const mo=S.payrollMonth;
+  const monthSales=D().sales.filter(s=>s.date.slice(0,7)===mo);
+  const rows=D().staff.map(st=>{
+    const rev=monthSales.reduce((a,s)=>a+s.items.filter(i=>i.staffId===st.id).reduce((x,i)=>x+i.price*i.qty,0),0);
+    const comm=Math.round(rev*st.commission/100);
+    return {st,rev,comm,total:st.baseSalary+comm};
+  });
+  const tot=rows.reduce((a,r)=>a+r.total,0);
+  const opts=[];const now=new Date();
+  for(let i=0;i<6;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const ym=d.getFullYear()+"-"+pad(d.getMonth()+1);opts.push(`<option value="${ym}" ${ym===mo?"selected":""}>${monthLabel(ym)}</option>`)}
+  return `<div class="flexh" style="margin-bottom:14px"><select style="max-width:220px" onchange="S.payrollMonth=this.value;render()">${opts.join("")}</select>
+   <span style="flex:1"></span><span class="mini">Commission is calculated on each staff member's share of completed sales.</span></div>
+  <div class="card"><table><thead><tr><th>Staff</th><th class="right">Services revenue</th><th class="right">Commission</th><th class="right">Base salary</th><th class="right">Total pay</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td><span class="flexh"><span class="avatar" style="background:${r.st.color}">${initials(r.st.name)}</span><span><b>${esc(r.st.name)}</b><div class="mini">${esc(r.st.role)} · ${r.st.commission}%</div></span></span></td>
+   <td class="right">${money(r.rev)}</td><td class="right">${money(r.comm)}</td><td class="right">${money(r.st.baseSalary)}</td><td class="right"><b>${money(r.total)}</b></td></tr>`).join("")}
+  <tr><td><b>Total payroll — ${monthLabel(mo)}</b></td><td></td><td></td><td></td><td class="right"><b style="font-size:16px">${money(tot)}</b></td></tr>
+  </tbody></table></div>`;
+}
+
+/* ================= services & settings ================= */
+function vServices(){
+  const cats=[...new Set(D().services.map(s=>s.cat))];
+  return `<div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="btn btn-primary" onclick="openService()">＋ Add service</button></div>
+  ${cats.map(cat=>`<div class="svc-cat">${esc(cat)}</div><div class="card"><table><tbody>
+    ${D().services.filter(s=>s.cat===cat).map(s=>`<tr><td><b>${esc(s.name)}</b></td><td class="mini">${s.dur} min</td><td class="right"><b>${money(s.price)}</b></td><td class="right" style="width:70px"><button class="btn btn-soft btn-sm" onclick="openService('${s.id}')">Edit</button></td></tr>`).join("")}
+  </tbody></table></div>`).join("")}`;
+}
+function openService(id){
+  const s=id?getSvc(id):{name:"",cat:"Hair",dur:60,price:100};
+  openModal(`
+  <div class="m-h">${id?"Edit service":"New service"}<button onclick="closeModal()">✕</button></div>
+  <div class="m-b">
+    <label>Service name</label><input id="sv-name" value="${esc(s.name)}">
+    <div class="row2"><div><label>Category</label><input id="sv-cat" value="${esc(s.cat)}" list="catlist"><datalist id="catlist">${[...new Set(D().services.map(x=>x.cat))].map(c=>`<option>${esc(c)}</option>`).join("")}</datalist></div>
+    <div><label>Duration (min)</label><input type="number" id="sv-dur" value="${s.dur}" step="15"></div></div>
+    <label>Price (${S.settings.currency})</label><input type="number" id="sv-price" value="${s.price}">
+  </div>
+  <div class="m-f">${id?`<button class="btn btn-danger" onclick="delService('${id}')">Delete</button><span style="flex:1"></span>`:""}<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveService('${id||""}')">Save</button></div>`);
+}
+function saveService(id){
+  const rec={name:$("#sv-name").value.trim(),cat:$("#sv-cat").value.trim()||"Other",dur:+$("#sv-dur").value||30,price:+$("#sv-price").value||0};
+  if(!rec.name){toast("Name is required");return}
+  if(id)Object.assign(getSvc(id),rec);else D().services.push({id:"sv"+uid(),...rec});
+  save();closeModal();render();toast("Service saved ✓");
+}
+function delService(id){if(!confirm("Delete this service?"))return;S.data.services=D().services.filter(s=>s.id!==id);save();closeModal();render();toast("Service deleted")}
+
+function vSettings(){
+  return `<div class="grid" style="grid-template-columns:1fr 1fr;max-width:900px">
+  <div class="card"><div class="card-h">Business profile</div><div class="card-b">
+    <label style="margin-top:0">Business name</label><input id="set-name" value="${esc(S.settings.name)}">
+    <label>Currency code</label><input id="set-cur" value="${esc(S.settings.currency)}" maxlength="4">
+    <button class="btn btn-primary" style="margin-top:14px" onclick="S.settings.name=$('#set-name').value;S.settings.currency=$('#set-cur').value||'AED';save();render();toast('Settings saved ✓')">Save settings</button>
+  </div></div>
+  <div class="card"><div class="card-h">Data</div><div class="card-b">
+    <p class="mini" style="margin-bottom:10px">This prototype stores data in your browser. Export a backup or reset to fresh demo data.</p>
+    <div class="flexh">
+      <button class="btn btn-ghost" onclick="exportData()">⬇ Export JSON</button>
+      <label class="btn btn-ghost" style="margin:0"><input type="file" accept=".json" style="display:none" onchange="importData(this)">⬆ Import JSON</label>
+      <button class="btn btn-danger" onclick="if(confirm('Reset to demo data? Your changes will be lost.')){try{localStorage.removeItem('lumaMVP')}catch(e){};S.data=buildSeed();save();render();toast('Reset complete')}">Reset demo</button>
+    </div>
+  </div></div>
+  <div class="card" style="grid-column:1/-1"><div class="card-h">Roadmap to full product</div><div class="card-b mini" style="line-height:2">
+    ✅ Bookings & staff calendar &nbsp; ✅ Customer CRM &nbsp; ✅ POS, sales & receipts &nbsp; ✅ Staff, commissions & payroll<br>
+    🔜 Online booking page for clients &nbsp; 🔜 Multi-branch & multi-tenant accounts &nbsp; 🔜 WhatsApp reminders &nbsp; 🔜 Inventory purchasing &nbsp; 🔜 Memberships, packages & gift cards &nbsp; 🔜 Arabic (RTL) interface
+  </div></div>
+  </div>`;
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify({settings:S.settings,data:S.data},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="luma-backup.json";a.click();
+}
+function importData(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const p=JSON.parse(r.result);if(!p.data||!p.data.staff)throw 0;S.settings=p.settings||S.settings;S.data=p.data;save();render();toast("Data imported ✓")}catch(e){toast("Invalid backup file")}};
+  r.readAsText(f);
+}
+
+/* ================= modal ================= */
+function openModal(html){$("#modal").innerHTML=html;$("#overlay").classList.add("open")}
+function closeModal(){$("#overlay").classList.remove("open")}
+$("#overlay").addEventListener("click",e=>{if(e.target.id==="overlay")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+render();
+</script>
+</body>
+</html>

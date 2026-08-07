@@ -1,0 +1,21 @@
+node_modules
+.next
+out
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Capacitor native builds
+android/app/build/
+android/.gradle/
+ios/App/Pods/
+ios/App/build/
+
+# Logs
+dev-server.log*
+*.log
+
+# Local config
+.claude/
+
