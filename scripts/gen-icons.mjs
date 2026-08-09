@@ -16,7 +16,7 @@ const maskableSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-  <text x="256" y="290" text-anchor="middle" font-family="Georgia,serif" font-size="200" font-weight="bold" fill="url(#accent)">L</text>
+  <text x="256" y="290" text-anchor="middle" font-family="Georgia,serif" font-size="160" font-weight="bold" fill="url(#accent)">RG</text>
   <rect x="156" y="340" width="200" height="4" rx="2" fill="url(#accent)" opacity="0.6"/>
 </svg>`);
 

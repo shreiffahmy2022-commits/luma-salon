@@ -5,13 +5,13 @@ import Script from "next/script";
 import NativeInit from "./native-init";
 
 export const metadata: Metadata = {
-  title: "Luma — Salon SaaS",
+  title: "RG — Salon SaaS",
   description: "All-in-one salon management: bookings, POS, staff, and customer management",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Luma",
+    title: "RG",
   },
   icons: {
     icon: [

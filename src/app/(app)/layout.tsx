@@ -32,8 +32,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen">
       <aside className="w-56 shrink-0 bg-brand-dark text-[#bdb6de] p-4 flex flex-col gap-1 sticky top-0 h-screen">
         <div className="flex items-center gap-3 px-2 pb-4 text-white">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-teal-500 grid place-items-center font-extrabold">L</div>
-          <div><b>Luma</b><div className="text-[10px] text-[#bdb6de]">{s.orgName}</div></div>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-teal-500 grid place-items-center font-extrabold text-sm">RG</div>
+          <div><b>RG</b><div className="text-[10px] text-[#bdb6de]">{s.orgName}</div></div>
         </div>
 
         <div className="pb-3 mb-1 border-b border-white/10 flex flex-col gap-2">

@@ -1,6 +1,6 @@
 {
-  "name": "Luma — Salon Management",
-  "short_name": "Luma",
+  "name": "RG — Salon Management",
+  "short_name": "RG",
   "description": "All-in-one salon management: bookings, POS, staff, and customer management",
   "start_url": "/dashboard",
   "scope": "/",

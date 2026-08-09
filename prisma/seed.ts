@@ -14,7 +14,7 @@ async function main() {
   if (existing) { console.log("Demo org already seeded."); return; }
 
   const org = await db.org.create({ data: { name: "Luxury Harrods Beauty & Spa", slug: "luma", currency: "AED" } });
-  const branch = await db.branch.create({ data: { orgId: org.id, name: "Jumeirah" } });
+  const branch = await db.branch.create({ data: { orgId: org.id, name: "Khalifa City" } });
   await db.user.create({
     data: { orgId: org.id, email: "owner@luma.demo", name: "Shreif Fahmy", role: "OWNER", passwordHash: await bcrypt.hash("demo1234", 10) },
   });

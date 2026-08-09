@@ -165,7 +165,7 @@ export default function BookingWizard(props: { slug: string; orgName: string; cu
           </div>
         )}
       </div>
-      <p className="text-center text-xs text-[#8a8296] mt-5">Powered by <b>Luma</b> · Salon SaaS</p>
+      <p className="text-center text-xs text-[#8a8296] mt-5">Powered by <b>RG</b> · Salon SaaS</p>
     </div>
   );
 }

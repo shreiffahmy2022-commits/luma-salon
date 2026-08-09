@@ -17,8 +17,8 @@ export default function LoginForm({ labels: L }: { labels: Labels }) {
     <div className="min-h-screen grid place-items-center p-4">
       <div className="card w-full max-w-sm p-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-teal-500 grid place-items-center text-white font-extrabold text-lg">L</div>
-          <div><b className="text-lg">Luma</b><div className="text-xs text-[#7a7590]">{L.salonManager}</div></div>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-teal-500 grid place-items-center text-white font-extrabold text-lg">RG</div>
+          <div><b className="text-lg">RG</b><div className="text-xs text-[#7a7590]">{L.salonManager}</div></div>
         </div>
         <h1 className="text-xl font-bold mb-1">{L.welcome}</h1>
         <p className="text-sm text-[#7a7590] mb-4">{L.signinSub}</p>

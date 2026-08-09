@@ -1,18 +1,14 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.luma.salon",
-  appName: "Luma",
+  appId: "com.rg.salon",
+  appName: "RG",
   webDir: "out",
   server: {
-    // In production, point to your deployed URL:
-    // url: "https://your-domain.com",
-    // For development, use the local dev server:
-    url: "http://localhost:3000",
-    cleartext: true,
+    url: "https://luma-salon.vercel.app",
   },
   ios: {
-    scheme: "Luma",
+    scheme: "RG",
     contentInset: "automatic",
     backgroundColor: "#2c2138",
   },

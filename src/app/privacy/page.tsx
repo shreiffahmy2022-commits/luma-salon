@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Privacy Policy — Luma" };
+export const metadata: Metadata = { title: "Privacy Policy — RG" };
 
 export default function PrivacyPolicy() {
   return (
@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-lg font-bold text-[#2c2138]">1. Introduction</h2>
             <p>
-              Luma (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) operates the Luma salon management
+              RG (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) operates the RG salon management
               application. This Privacy Policy explains how we collect, use, disclose, and safeguard your
               information when you use our mobile application and web platform.
             </p>
@@ -107,7 +107,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-[#e9e6f2] text-center text-xs text-[#7a7590]">
-          Powered by <b>Luma</b> · Salon SaaS
+          Powered by <b>RG</b> · Salon SaaS
         </div>
       </div>
     </div>

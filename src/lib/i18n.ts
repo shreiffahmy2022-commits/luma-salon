@@ -262,7 +262,7 @@ const en: Dict = {
   "auth.creating": "Creating…",
   "auth.salonManager": "Salon Manager",
   "auth.passwordMin": "Password (min 8 chars)",
-  "auth.orgPlaceholder": "e.g. Luma Beauty Lounge",
+  "auth.orgPlaceholder": "e.g. RG Beauty Lounge",
   "auth.namePlaceholder": "Full name",
 };
 
