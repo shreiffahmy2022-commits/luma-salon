@@ -12,9 +12,10 @@
       <stop offset="70%" stop-color="#e8c88a"/>
       <stop offset="100%" stop-color="#b9895a"/>
     </linearGradient>
-    <linearGradient id="goldShine" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="goldBright" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#f5dca8"/>
-      <stop offset="100%" stop-color="#b9895a"/>
+      <stop offset="50%" stop-color="#edd5a0"/>
+      <stop offset="100%" stop-color="#d4a96a"/>
     </linearGradient>
     <linearGradient id="innerGlow" x1="50%" y1="0%" x2="50%" y2="100%">
       <stop offset="0%" stop-color="#5b3b6e" stop-opacity="0.4"/>
@@ -23,8 +24,8 @@
     <filter id="textShadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
     </filter>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+    <filter id="leafGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -32,21 +33,72 @@
     </filter>
   </defs>
 
-  <!-- Background with rounded corners -->
+  <!-- Background -->
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-
-  <!-- Subtle inner glow at top -->
   <rect width="512" height="256" rx="112" fill="url(#innerGlow)"/>
 
   <!-- Decorative ring -->
-  <circle cx="256" cy="246" r="155" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.25"/>
-  <circle cx="256" cy="246" r="140" fill="none" stroke="url(#gold)" stroke-width="0.5" opacity="0.15"/>
+  <circle cx="256" cy="246" r="158" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.3"/>
+  <circle cx="256" cy="246" r="140" fill="none" stroke="url(#gold)" stroke-width="0.8" opacity="0.15"/>
 
-  <!-- Corner flourishes -->
-  <path d="M120,180 Q120,160 140,160" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.3"/>
-  <path d="M392,160 Q392,160 392,180" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.3"/>
-  <path d="M120,312 Q120,332 140,332" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.3"/>
-  <path d="M372,332 Q392,332 392,312" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.3"/>
+  <!-- ══ GOLD LEAVES ══ -->
+  <g filter="url(#leafGlow)">
+
+    <!-- ── Top cluster ── -->
+    <!-- Large center leaf pointing up -->
+    <path d="M244,86 Q238,55 256,35 Q274,55 268,86 Q256,68 244,86Z" fill="url(#gold)" opacity="0.75"/>
+    <path d="M250,82 Q256,58 256,40 Q256,58 262,82 Q256,70 250,82Z" fill="url(#goldBright)" opacity="0.5"/>
+    <!-- Left of center -->
+    <path d="M210,100 Q192,72 205,48 Q215,72 225,78 Q214,80 210,100Z" fill="url(#gold)" opacity="0.7"/>
+    <path d="M218,104 Q228,76 244,64 Q232,82 230,92 Q222,88 218,104Z" fill="url(#goldBright)" opacity="0.5"/>
+    <!-- Right of center -->
+    <path d="M302,100 Q320,72 307,48 Q297,72 287,78 Q298,80 302,100Z" fill="url(#gold)" opacity="0.7"/>
+    <path d="M294,104 Q284,76 268,64 Q280,82 282,92 Q290,88 294,104Z" fill="url(#goldBright)" opacity="0.5"/>
+    <!-- Far left top -->
+    <path d="M170,125 Q148,105 160,80 Q168,105 180,112 Q172,112 170,125Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M178,128 Q185,106 198,95 Q190,110 188,118 Q182,116 178,128Z" fill="url(#goldBright)" opacity="0.4"/>
+    <!-- Far right top -->
+    <path d="M342,125 Q364,105 352,80 Q344,105 332,112 Q340,112 342,125Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M334,128 Q327,106 314,95 Q322,110 324,118 Q330,116 334,128Z" fill="url(#goldBright)" opacity="0.4"/>
+
+    <!-- ── Right side ── -->
+    <path d="M404,178 Q430,162 438,182 Q422,180 414,192 Q410,180 404,178Z" fill="url(#gold)" opacity="0.65"/>
+    <path d="M412,172 Q432,158 440,172 Q426,172 420,180 Q416,172 412,172Z" fill="url(#goldBright)" opacity="0.4"/>
+    <path d="M416,210 Q442,200 448,218 Q432,212 424,224 Q422,212 416,210Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M418,240 Q444,236 448,254 Q434,248 426,258 Q424,246 418,240Z" fill="url(#goldBright)" opacity="0.55"/>
+    <path d="M416,272 Q440,272 444,290 Q430,282 422,292 Q422,278 416,272Z" fill="url(#gold)" opacity="0.5"/>
+    <path d="M408,302 Q430,306 432,324 Q420,314 412,322 Q412,310 408,302Z" fill="url(#goldBright)" opacity="0.45"/>
+
+    <!-- ── Left side ── -->
+    <path d="M108,178 Q82,162 74,182 Q90,180 98,192 Q102,180 108,178Z" fill="url(#gold)" opacity="0.65"/>
+    <path d="M100,172 Q80,158 72,172 Q86,172 92,180 Q96,172 100,172Z" fill="url(#goldBright)" opacity="0.4"/>
+    <path d="M96,210 Q70,200 64,218 Q80,212 88,224 Q90,212 96,210Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M94,240 Q68,236 64,254 Q78,248 86,258 Q88,246 94,240Z" fill="url(#goldBright)" opacity="0.55"/>
+    <path d="M96,272 Q72,272 68,290 Q82,282 90,292 Q90,278 96,272Z" fill="url(#gold)" opacity="0.5"/>
+    <path d="M104,302 Q82,306 80,324 Q92,314 100,322 Q100,310 104,302Z" fill="url(#goldBright)" opacity="0.45"/>
+
+    <!-- ── Bottom cluster ── -->
+    <path d="M180,370 Q158,380 154,400 Q170,386 182,390 Q178,380 180,370Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M200,385 Q184,400 186,420 Q196,404 208,404 Q202,396 200,385Z" fill="url(#goldBright)" opacity="0.5"/>
+    <!-- Bottom center pair -->
+    <path d="M234,400 Q224,424 240,440 Q248,420 258,416 Q244,414 234,400Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M278,400 Q288,424 272,440 Q264,420 254,416 Q268,414 278,400Z" fill="url(#gold)" opacity="0.6"/>
+    <!-- Bottom center leaf pointing down -->
+    <path d="M248,408 Q244,435 256,448 Q268,435 264,408 Q256,422 248,408Z" fill="url(#goldBright)" opacity="0.45"/>
+    <!-- Bottom right -->
+    <path d="M332,370 Q354,380 358,400 Q342,386 330,390 Q334,380 332,370Z" fill="url(#gold)" opacity="0.6"/>
+    <path d="M312,385 Q328,400 326,420 Q316,404 304,404 Q310,396 312,385Z" fill="url(#goldBright)" opacity="0.5"/>
+
+    <!-- Small gold berries/dots scattered -->
+    <circle cx="148" cy="108" r="3.5" fill="url(#gold)" opacity="0.5"/>
+    <circle cx="364" cy="108" r="3.5" fill="url(#gold)" opacity="0.5"/>
+    <circle cx="430" cy="290" r="3" fill="url(#goldBright)" opacity="0.4"/>
+    <circle cx="82" cy="290" r="3" fill="url(#goldBright)" opacity="0.4"/>
+    <circle cx="165" cy="400" r="3" fill="url(#gold)" opacity="0.4"/>
+    <circle cx="347" cy="400" r="3" fill="url(#gold)" opacity="0.4"/>
+    <circle cx="256" cy="448" r="3" fill="url(#goldBright)" opacity="0.35"/>
+    <circle cx="256" cy="38" r="3" fill="url(#goldBright)" opacity="0.5"/>
+  </g>
 
   <!-- Main text RG -->
   <text x="256" y="280" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="156" font-weight="bold" letter-spacing="8" fill="url(#gold)" filter="url(#textShadow)">RG</text>
