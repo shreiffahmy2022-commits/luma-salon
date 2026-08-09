@@ -6,18 +6,21 @@ const svg = readFileSync("public/icon.svg");
 const maskableSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2c2138"/>
-      <stop offset="50%" stop-color="#4b3560"/>
-      <stop offset="100%" stop-color="#5b3b6e"/>
+      <stop offset="0%" stop-color="#1a1225"/>
+      <stop offset="40%" stop-color="#2c2138"/>
+      <stop offset="100%" stop-color="#3d2a4f"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#b9895a"/>
-      <stop offset="100%" stop-color="#d4a96a"/>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9975e"/>
+      <stop offset="30%" stop-color="#e8c88a"/>
+      <stop offset="50%" stop-color="#f5dca8"/>
+      <stop offset="70%" stop-color="#e8c88a"/>
+      <stop offset="100%" stop-color="#b9895a"/>
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-  <text x="256" y="290" text-anchor="middle" font-family="Georgia,serif" font-size="160" font-weight="bold" fill="url(#accent)">RG</text>
-  <rect x="156" y="340" width="200" height="4" rx="2" fill="url(#accent)" opacity="0.6"/>
+  <text x="256" y="290" text-anchor="middle" font-family="Georgia,serif" font-size="150" font-weight="bold" letter-spacing="8" fill="url(#gold)">RG</text>
+  <text x="256" y="340" text-anchor="middle" font-family="Georgia,serif" font-size="24" letter-spacing="12" fill="url(#gold)" opacity="0.5">BEAUTY</text>
 </svg>`);
 
 const sizes = [192, 512];
