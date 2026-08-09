@@ -16,6 +16,9 @@ export default async function Dashboard() {
   const prev7 = Array.from({ length: 7 }, (_, i) => addDays(today, -7 - i));
   const month = today.slice(0, 7);
 
+  const branch = await db.branch.findUnique({ where: { id: s.branchId }, select: { name: true } });
+  const branchName = branch?.name ?? s.branchName;
+
   const [apptsToday, salesToday, sales14, monthItems, monthSalesCount] = await Promise.all([
     db.appointment.findMany({
       where: { orgId: s.orgId, branchId: s.branchId, date: today, status: { not: "CANCELLED" } },
@@ -55,7 +58,7 @@ export default async function Dashboard() {
   return (
     <div>
       <h1 className="text-xl font-bold mb-1">{tt("dash.title")}</h1>
-      <p className="text-sm text-[#7a7590] mb-5">{s.orgName} · {s.branchName} · {dateLabel(today)}</p>
+      <p className="text-sm text-[#7a7590] mb-5">{s.orgName} · {branchName} · {dateLabel(today)}</p>
       <div className="grid gap-4 md:grid-cols-4 mb-5">
         <div className="card p-4"><div className="text-xs font-semibold text-[#7a7590]">{tt("dash.todayRevenue")}</div><div className="text-2xl font-extrabold mt-1">{fmtMoney(salesToday._sum.total || 0, cur)}</div><div className="text-xs text-[#7a7590] mt-1">{salesToday._count} {tt("dash.transactions")}</div></div>
         <div className="card p-4"><div className="text-xs font-semibold text-[#7a7590]">{tt("dash.apptsToday")}</div><div className="text-2xl font-extrabold mt-1">{apptsToday.length}</div><div className="text-xs text-[#7a7590] mt-1">{apptsToday.filter((a) => a.status === "COMPLETED").length} done · {upcoming.length} upcoming</div></div>
