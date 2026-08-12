@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { addDays, fmtMoney, initials, minToStr, todayISO } from "@/lib/util";
 import { createOnlineBooking, getSlots } from "./actions";
 
@@ -8,6 +9,27 @@ type Svc = { id: string; name: string; nameAr?: string; category: string; durati
 type Staff = { id: string; name: string; title: string; color: string; branchId: string };
 type Branch = { id: string; name: string };
 type Slot = { startMin: number; staffId: string };
+
+const CAT_IMG: Record<string, string> = {
+  nail: "/images/categories/nails.png",
+  hair: "/images/categories/hair.png",
+  facial: "/images/categories/facial.png",
+  skin: "/images/categories/facial.png",
+  massage: "/images/categories/massage.png",
+  spa: "/images/categories/massage.png",
+  henna: "/images/categories/henna.png",
+  lash: "/images/categories/lashes.png",
+  eyelash: "/images/categories/lashes.png",
+  brow: "/images/categories/brows.png",
+  thread: "/images/categories/brows.png",
+  bleach: "/images/categories/brows.png",
+  wax: "/images/categories/waxing.png",
+};
+function catImg(cat: string) {
+  const l = cat.toLowerCase();
+  for (const [k, v] of Object.entries(CAT_IMG)) if (l.includes(k)) return v;
+  return null;
+}
 
 export default function BookingWizard(props: { slug: string; orgName: string; currency: string; branches: Branch[]; services: Svc[]; staff: Staff[] }) {
   const { slug, currency, branches, services, staff } = props;
@@ -68,9 +90,21 @@ export default function BookingWizard(props: { slug: string; orgName: string; cu
               </div>
             )}
             <h2 className="font-serif text-xl mb-4">Choose a service</h2>
-            {cats.map((cat) => (
+            {cats.map((cat) => {
+              const img = catImg(cat);
+              return (
               <div key={cat}>
-                <div className="text-[11px] font-bold uppercase tracking-wider text-[#b9895a] mt-4 mb-2">{cat}</div>
+                {img ? (
+                  <div className="relative rounded-xl overflow-hidden mt-4 mb-3 h-24">
+                    <Image src={img} alt={cat} fill className="object-cover" sizes="500px" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+                    <div className="absolute inset-0 flex items-center px-4">
+                      <span className="text-white font-serif text-lg font-semibold drop-shadow-lg">{cat}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-[#b9895a] mt-4 mb-2">{cat}</div>
+                )}
                 {services.filter((s) => s.category === cat).map((s) => (
                   <button key={s.id} onClick={() => { setServiceId(s.id); setStep(2); }}
                     className={`w-full flex items-center gap-3 border rounded-xl p-3.5 mb-2 text-left hover:border-[#5b3b6e] ${serviceId === s.id ? "border-[#5b3b6e] bg-[#f2ecf6]" : "border-[#eae4da]"}`}>
@@ -79,7 +113,8 @@ export default function BookingWizard(props: { slug: string; orgName: string; cu
                   </button>
                 ))}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

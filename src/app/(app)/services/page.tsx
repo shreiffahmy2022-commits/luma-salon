@@ -1,8 +1,30 @@
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { getLocale, t, translator } from "@/lib/i18n";
 import { fmtMoney } from "@/lib/util";
 import { deleteService, upsertService } from "./actions";
+
+const CAT_IMG: Record<string, string> = {
+  nail: "/images/categories/nails.png",
+  hair: "/images/categories/hair.png",
+  facial: "/images/categories/facial.png",
+  skin: "/images/categories/facial.png",
+  massage: "/images/categories/massage.png",
+  spa: "/images/categories/massage.png",
+  henna: "/images/categories/henna.png",
+  lash: "/images/categories/lashes.png",
+  eyelash: "/images/categories/lashes.png",
+  brow: "/images/categories/brows.png",
+  thread: "/images/categories/brows.png",
+  bleach: "/images/categories/brows.png",
+  wax: "/images/categories/waxing.png",
+};
+function catImg(cat: string) {
+  const l = cat.toLowerCase();
+  for (const [k, v] of Object.entries(CAT_IMG)) if (l.includes(k)) return v;
+  return null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +51,21 @@ export default async function ServicesPage() {
           <div className="md:col-span-2 mt-3"><button className="btn-primary">{tt("svc.save")}</button></div>
         </form>
       </details>
-      {cats.map((cat) => (
+      {cats.map((cat) => {
+        const img = catImg(cat);
+        return (
         <div key={cat} className="mb-5">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-[#7a7590] mb-2">{t(`cat.${cat}`, locale)}</div>
+          {img ? (
+            <div className="relative rounded-xl overflow-hidden mb-2 h-20">
+              <Image src={img} alt={cat} fill className="object-cover" sizes="768px" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex items-center px-4">
+                <span className="text-white font-semibold text-sm drop-shadow-lg">{t(`cat.${cat}`, locale)}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="text-[11px] font-bold uppercase tracking-wider text-[#7a7590] mb-2">{t(`cat.${cat}`, locale)}</div>
+          )}
           <div className="card overflow-hidden">
             <table className="w-full">
               <tbody>
@@ -64,7 +98,8 @@ export default async function ServicesPage() {
             </table>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
