@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import BookingWizard from "./ui";
+import AssistantWidget from "./assistant-widget";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function PublicBookingPage({ params }: { params: { slug: st
         <p className="text-purple-200 mt-2 text-sm">Book your next appointment online — no calls, no waiting.</p>
       </div>
       <BookingWizard slug={org.slug} orgName={org.name} currency={org.currency} branches={branches} services={services} staff={staff} />
+      <AssistantWidget slug={org.slug} orgName={org.name} />
     </div>
   );
 }
