@@ -34,14 +34,28 @@ When an org has more than one branch, `/book/<slug>` opens with a **"Choose a lo
 
 Prereqs: Node 20+, and any PostgreSQL 14+ (Docker, native install, or a hosted DB like Neon).
 
+**Quick start** — start a database, then let the bootstrap script do the rest:
+
 ```bash
-cp .env.example .env         # set AUTH_SECRET to something random, point DATABASE_URL at your DB
 docker compose up -d         # optional: starts PostgreSQL on :5432 if you use Docker
 npm install                  # also runs prisma generate
-npm run db:push              # creates the schema
-npm run db:seed              # demo salon with staff, services, bookings, sales
+npm run setup                # creates .env (random AUTH_SECRET) + db push + seed demo data
 npm run dev                  # http://localhost:3000
 ```
+
+`npm run setup` is idempotent — safe to re-run. If the database isn't reachable it stops and
+tells you how to start one. On Windows this repo uses a portable PostgreSQL on **port 5433**
+(see the next section) — start that first, then run `npm run setup`.
+
+<details>
+<summary>Manual steps (what <code>npm run setup</code> automates)</summary>
+
+```bash
+cp .env.example .env         # set AUTH_SECRET to something random, point DATABASE_URL at your DB
+npm run db:push              # creates the schema
+npm run db:seed              # demo salon with staff, services, bookings, sales
+```
+</details>
 
 Demo login: **owner@luma.demo / demo1234** · Demo booking page: **/book/luma**
 
