@@ -4,11 +4,11 @@ import Anthropic from "@anthropic-ai/sdk";
  * Shared Anthropic client for server-side AI features.
  *
  * The API key comes from ANTHROPIC_API_KEY (see .env.example). The model is
- * configurable via ANTHROPIC_MODEL — it defaults to Claude Opus, but a salon
- * that wants faster/cheaper replies for the public booking assistant can set
- * e.g. ANTHROPIC_MODEL="claude-haiku-4-5".
+ * configurable via ANTHROPIC_MODEL — it defaults to Claude Haiku (fast and
+ * low-cost, a good fit for the high-volume public booking chat). Set
+ * ANTHROPIC_MODEL to a more capable model like "claude-opus-5" if you prefer.
  */
-export const AI_MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5";
+export const AI_MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-4-5";
 
 export function aiConfigured() {
   return Boolean(process.env.ANTHROPIC_API_KEY);
